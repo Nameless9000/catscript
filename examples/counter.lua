@@ -1,13 +1,14 @@
---!strict
-local CatScript = require("catlib")
-local script = CatScript.new()
+local compile = require("../catlib")()
 
-script:KeyPressed("F", function(script)
-    local count = script:CreateVariable("count")
-    count:Increase("1")
-    
-	-- replace 65 with the global id of your text
-    script:SetObjectText(65, "Counter: "..count:Get())
+local count_button = Button(12)
+local counter_label = Text(34)
+
+count = 0
+
+count_button.OnClick(function()
+	count += 1
+	
+	counter_label.Text = count
 end)
 
-print(script:Export())
+compile()

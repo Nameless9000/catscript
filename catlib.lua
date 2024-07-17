@@ -52,36 +52,31 @@ end
 type VariableImpl = {
     __index: VariableImpl;
 
-    Get: (self: Variable) -> string;
-    Set: (self: Variable, value: string) -> ();
-    Increase: (self: Variable, by: string) -> ();
-    Decrease: (self: Variable, by: string) -> ();
-    Multiply: (self: Variable, by: string) -> ();
-    Divide: (self: Variable, by: string) -> ();
-    Round: (self: Variable) -> ();
-    Floor: (self: Variable) -> ();
-    SetRandom: (self: Variable, min: string, max: string) -> ();
-    SetToTextFromInput: (self: Variable, globalid: number) -> ();
+    Get: (name: string) -> string;
+    Set: (name: string, script_obj: ScriptObj, value: string) -> ();
+    Increase: (name: string, script_obj: ScriptObj, by: string) -> ();
+    Decrease: (name: string, script_obj: ScriptObj, by: string) -> ();
+    Multiply: (name: string, script_obj: ScriptObj, by: string) -> ();
+    Divide: (name: string, script_obj: ScriptObj, by: string) -> ();
+    Round: (name: string, script_obj: ScriptObj) -> ();
+    Floor: (name: string, script_obj: ScriptObj) -> ();
+    SetRandom: (name: string, script_obj: ScriptObj, min: string, max: string) -> ();
+    SetToTextFromInput: (name: string, script_obj: ScriptObj, globalid: number) -> ();
 }
-
-type Variable = typeof(setmetatable({} :: {
-    name: string,
-    script_obj: ScriptObj
-}, {} :: VariableImpl))
 
 local Variable: VariableImpl = {} :: VariableImpl
 Variable.__index = Variable
 
-function Variable:Get()
-    return "{"..self.name.."}"
+function Variable.Get(name)
+   return `\{{name}\}` 
 end
-function Variable:Set(value)
-    table.insert(self.script_obj.data, {
+function Variable.Set(name, script_obj, value)
+    table.insert(script_obj.data, {
         id = "11";
         text = {
             "Set variable",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             },
             "to",
@@ -92,13 +87,13 @@ function Variable:Set(value)
         }
     })
 end
-function Variable:Increase(by)
-    table.insert(self.script_obj.data, {
+function Variable.Increase(name, script_obj, by)
+    table.insert(script_obj.data, {
         id = "12";
         text = {
             "Increase",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             },
             "by",
@@ -109,13 +104,13 @@ function Variable:Increase(by)
         }
     })
 end
-function Variable:Decrease(by)
-    table.insert(self.script_obj.data, {
+function Variable.Decrease(name, script_obj, by)
+    table.insert(script_obj.data, {
         id = "13";
         text = {
             "Subtract",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             },
             "by",
@@ -126,13 +121,13 @@ function Variable:Decrease(by)
         }
     })
 end
-function Variable:Multiply(by)
-    table.insert(self.script_obj.data, {
+function Variable.Multiply(name, script_obj, by)
+    table.insert(script_obj.data, {
         id = "14";
         text = {
             "Multiply",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             },
             "by",
@@ -143,13 +138,13 @@ function Variable:Multiply(by)
         }
     })
 end
-function Variable:Divide(by)
-    table.insert(self.script_obj.data, {
+function Variable.Divide(name, script_obj, by)
+    table.insert(script_obj.data, {
         id = "15";
         text = {
             "Divide",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             },
             "by",
@@ -160,37 +155,37 @@ function Variable:Divide(by)
         }
     })
 end
-function Variable:Round()
-    table.insert(self.script_obj.data, {
+function Variable.Round(name, script_obj)
+    table.insert(script_obj.data, {
         id = "16";
         text = {
             "Round",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             }
         }
     })
 end
-function Variable:Floor()
-    table.insert(self.script_obj.data, {
+function Variable.Floor(name, script_obj)
+    table.insert(script_obj.data, {
         id = "17";
         text = {
             "Floor",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             }
         }
     })
 end
-function Variable:SetRandom(min, max)
-    table.insert(self.script_obj.data, {
+function Variable.SetRandom(name, script_obj, min, max)
+    table.insert(script_obj.data, {
         id = "27";
         text = {
             "Set",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             },
             "to random",
@@ -204,13 +199,13 @@ function Variable:SetRandom(min, max)
         }
     })
 end
-function Variable:SetToTextFromInput(globalid)
-    table.insert(self.script_obj.data, {
+function Variable.SetToTextFromInput(name, script_obj, globalid)
+    table.insert(script_obj.data, {
         id = "30";
         text = {
             "Set",
             {
-                value = self.name;
+                value = name;
                 t = "string";
             },
             "to text from",
@@ -234,13 +229,13 @@ type ScriptObjImpl = {
     Error: (self: ScriptObj, string: string) -> ();
 
     Wait: (self: ScriptObj, seconds: string) -> ();
-    IfEqual: (self: ScriptObj, a: string, b: string, callback: () -> ()) -> ();
-    IfNotEqual: (self: ScriptObj, a: string, b: string, callback: () -> ()) -> ();
-    IfGreater: (self: ScriptObj, a: string, b: string, callback: () -> ()) -> ();
-    IfLower: (self: ScriptObj, a: string, b: string, callback: () -> ()) -> ();
+    IfEqual: (self: ScriptObj, a: string, b: string) -> ();
+    IfNotEqual: (self: ScriptObj, a: string, b: string) -> ();
+    IfGreater: (self: ScriptObj, a: string, b: string) -> ();
+    IfLower: (self: ScriptObj, a: string, b: string) -> ();
 
-    Repeat: (self: ScriptObj, times: string, callback: () -> ()) -> ();
-    RepeatForever: (self: ScriptObj, callback: () -> ()) -> ();
+    Repeat: (self: ScriptObj, times: string) -> ();
+    RepeatForever: (self: ScriptObj) -> ();
 
     Redirect: (self: ScriptObj, to: string) -> ();
 
@@ -256,7 +251,7 @@ type ScriptObjImpl = {
     SetObjectText: (self: ScriptObj, globalid: number, text: string) -> ();
     SetObjectProperty: (self: ScriptObj, globalid: number, property: string, value: string) -> ();
 
-    CreateVariable: (self: ScriptObj, name: string) -> Variable;
+    End: (self: ScriptObj) -> ();
 }
 
 type ScriptObj = typeof(setmetatable({} :: {
@@ -321,7 +316,7 @@ function ScriptObj:Wait(seconds)
         }
     })
 end
-function ScriptObj:IfEqual(a, b, callback)
+function ScriptObj:IfEqual(a, b)
     table.insert(self.data, {
         id = "18";
         text = {
@@ -337,15 +332,8 @@ function ScriptObj:IfEqual(a, b, callback)
             }
         }
     })
-
-    callback(self)
-
-    table.insert(self.data, {
-        id = "25";
-        text = {"end"};
-    })
 end
-function ScriptObj:IfNotEqual(a, b, callback)
+function ScriptObj:IfNotEqual(a, b)
     table.insert(self.data, {
         id = "19";
         text = {
@@ -361,15 +349,8 @@ function ScriptObj:IfNotEqual(a, b, callback)
             }
         }
     })
-
-    callback(self)
-
-    table.insert(self.data, {
-        id = "25";
-        text = {"end"};
-    })
 end
-function ScriptObj:IfGreater(a, b, callback)
+function ScriptObj:IfGreater(a, b)
     table.insert(self.data, {
         id = "20";
         text = {
@@ -385,15 +366,8 @@ function ScriptObj:IfGreater(a, b, callback)
             }
         }
     })
-
-    callback(self)
-
-    table.insert(self.data, {
-        id = "25";
-        text = {"end"};
-    })
 end
-function ScriptObj:IfLower(a, b, callback)
+function ScriptObj:IfLower(a, b)
     table.insert(self.data, {
         id = "21";
         text = {
@@ -409,16 +383,9 @@ function ScriptObj:IfLower(a, b, callback)
             }
         }
     })
-
-    callback(self)
-
-    table.insert(self.data, {
-        id = "25";
-        text = {"end"};
-    })
 end
 
-function ScriptObj:Repeat(times, callback)
+function ScriptObj:Repeat(times)
     table.insert(self.data, {
         id = "22";
         text = {
@@ -430,27 +397,13 @@ function ScriptObj:Repeat(times, callback)
             "times"
         }
     })
-
-    callback(self)
-
-    table.insert(self.data, {
-        id = "25";
-        text = {"end"};
-    })
 end
-function ScriptObj:RepeatForever(callback)
+function ScriptObj:RepeatForever()
     table.insert(self.data, {
         id = "23";
         text = {
             "Repeat forever"
         }
-    })
-
-    callback(self)
-
-    table.insert(self.data, {
-        id = "25";
-        text = {"end"};
     })
 end
 
@@ -588,11 +541,11 @@ function ScriptObj:SetObjectProperty(globalid, property, value)
     })
 end
 
-function ScriptObj:CreateVariable(name)
-    return setmetatable({
-        name = name;
-        script_obj = self;
-    }, Variable)
+function ScriptObj:End()
+    table.insert(self.data, {
+        id = "25";
+        text = {"end"};
+    })
 end
 
 ---------------------
@@ -603,10 +556,10 @@ type CatScriptImpl = {
     new: () -> CatScript;
     Export: (self: CatScript, globalid: number?) -> string;
 
-    Loaded: (self: CatScript, callback: (ScriptObj) -> ()) -> ();
-    ButtonPressed: (self: CatScript, globalid: number, callback: (ScriptObj) -> ()) -> ();
-    ButtonHovered: (self: CatScript, globalid: number, callback: (ScriptObj) -> ()) -> ();
-    KeyPressed: (self: CatScript, key: string, callback: (ScriptObj) -> ()) -> ();
+    Loaded: (self: CatScript, script_data: ScriptObj) -> ();
+    ButtonPressed: (self: CatScript, globalid: number, script_data: ScriptObj) -> ();
+    ButtonHovered: (self: CatScript, globalid: number, script_data: ScriptObj) -> ();
+    KeyPressed: (self: CatScript, key: string, script_data: ScriptObj) -> ();
 }
 
 type CatScript = typeof(setmetatable({} :: {
@@ -623,20 +576,14 @@ function CatScript.new()
 end
 
 -- Only these two annotations are necessary
-function CatScript:Loaded(callback)
-    local script_data = ScriptObj.new()
-    callback(script_data)
-
+function CatScript:Loaded(script_data)
     table.insert(self.data, {
         id = "0";
         text = {};
-        actions = script_data.data;
+        actions = script_data;
     })
 end
-function CatScript:ButtonPressed(globalid, callback)
-    local script_data = ScriptObj.new()
-    callback(script_data)
-
+function CatScript:ButtonPressed(globalid, script_data)
     table.insert(self.data, {
         id = "1";
         text = {
@@ -647,13 +594,10 @@ function CatScript:ButtonPressed(globalid, callback)
             },
             "pressed..."
         };
-        actions = script_data.data;
+        actions = script_data;
     })
 end
-function CatScript:ButtonHovered(globalid, callback)
-    local script_data = ScriptObj.new()
-    callback(script_data)
-
+function CatScript:ButtonHovered(globalid, script_data)
     table.insert(self.data, {
         id = "3";
         text = {
@@ -664,13 +608,10 @@ function CatScript:ButtonHovered(globalid, callback)
             },
             "hovered..."
         };
-        actions = script_data.data;
+        actions = script_data;
     })
 end
-function CatScript:KeyPressed(key, callback)
-    local script_data = ScriptObj.new()
-    callback(script_data)
-
+function CatScript:KeyPressed(key, script_data)
     table.insert(self.data, {
         id = "2";
         text = {
@@ -680,7 +621,7 @@ function CatScript:KeyPressed(key, callback)
             },
             "pressed..."
         };
-        actions = script_data.data;
+        actions = script_data;
     })
 end
 
@@ -696,4 +637,155 @@ function CatScript:Export(globalid)
     return json.encode(export_data)
 end
 
-return CatScript
+--------------------------
+----- Code Injection -----
+--------------------------
+local main_script = CatScript.new()
+local main_script_context = ScriptObj.new()
+local tmp_var_count = 0
+
+main_script:Loaded(main_script_context)
+
+local function get_script_context(): ScriptObj
+    local script_context = getfenv(debug.info(3, "f"))["__SCRIPT_CONTEXT__"]
+    assert(script_context, "script context was not found")
+    return script_context
+end
+
+local branch_types = {
+    IF = 1;
+    REPEAT = 2;
+}
+local branch_stack = {}
+local function if_handler(script_obj: ScriptObj, condition)
+    table.insert(branch_stack, {branch_types.IF})
+
+    get_script_context():IfEqual("", "")
+end
+local function repeat_handler(script_obj: ScriptObj, times: number?)
+    table.insert(branch_stack, {branch_types.REPEAT})
+
+    if times == nil then
+        get_script_context():RepeatForever()
+    else
+        get_script_context():Repeat(tostring(times))
+    end
+end
+local function else_handler()
+    
+end
+local function end_handler()
+    assert(#branch_stack > 0, "unexpected end statement")
+
+    get_script_context():End()
+    table.remove(branch_stack, #branch_stack)
+end
+
+local function print_handler(...)
+    get_script_context():Log(table.concat({...}, " "))
+end
+local function warn_handler(...)
+    get_script_context():Warn(table.concat({...}, " "))
+end
+local function error_handler(...)
+    get_script_context():Error(table.concat({...}, " "))
+end
+
+local function create_button(globalid)
+    return {
+        OnClick = function(callback)
+            local script_context = ScriptObj.new()
+            main_script:ButtonPressed(globalid, script_context)
+
+            local env = getfenv(debug.info(2, "f"))
+            local old_script_context = env["__SCRIPT_CONTEXT__"]
+
+            env["__SCRIPT_CONTEXT__"] = script_context
+            setfenv(callback, env)
+
+            callback()
+
+            env["__SCRIPT_CONTEXT__"] = old_script_context
+            setfenv(callback, env)
+        end
+    }
+end
+
+local function create_text(globalid)
+    return setmetatable({}, {
+        __newindex = function(self, i, v)
+            if i == "Text" then
+                if typeof(v) == "table" then
+                    print(`TEXT {globalid} = {v[1]}`)
+                    get_script_context():SetObjectText(globalid, Variable.Get(v[1]))
+                elseif typeof(v) == "string" then
+                    print(`TEXT {globalid} = "{v}"`)
+                    get_script_context():SetObjectText(globalid, v)
+                end
+            end
+        end
+    })
+end
+
+return function()
+    local func = debug.info(2, "f")
+    local env = {}
+
+    env["Button"] = create_button
+    env["Text"] = create_text
+
+    env["REPEAT"] = repeat_handler
+    env["IF"] = if_handler
+    env["ELSE"] = else_handler
+    env["END"] = end_handler
+
+    env["print"] = print_handler
+    env["warn"] = warn_handler
+    env["error"] = error_handler
+
+    env["__SCRIPT_CONTEXT__"] = main_script_context
+
+    -- handle env
+    local var_env = {}
+    env = setmetatable(env, {
+        __index = function(self, i)
+            local var = rawget(var_env, i)
+            if var then
+                print(`GET {i} : {var}`)
+                return setmetatable({i}, {
+                    __add = function(_, b)
+                        print(`ADD {i} + {b}`)
+                        local script_obj = get_script_context()
+
+                        tmp_var_count += 1
+                        local tmp_var = `_{tmp_var_count}`
+                        Variable.Set(tmp_var, script_obj, Variable.Get(i))
+                        Variable.Increase(tmp_var, script_obj, b)
+
+                        return Variable.Get(tmp_var)
+                    end
+                })
+            end
+
+            return rawget(self, i)
+        end,
+        __newindex = function(self, i, v)
+            if v == nil then return end
+
+            print(`SET {i} = {v}`)
+
+            if typeof(v) == "number" then
+                Variable.Set(i, get_script_context(), tostring(v))
+            elseif typeof(v) == "string" then
+                Variable.Set(i, get_script_context(), v)
+            end
+            rawset(var_env, i, v)
+        end
+    })
+
+    setfenv(func, env)
+    
+    return function()
+        print(main_script:Export(0))
+    end
+end

@@ -9,6 +9,9 @@ count_button.OnClick(function()
 	count += 1
 	
 	counter_label.Text = count
+	IF_EQ (count, 4)
+		counter_label.Text = "Nice"
+	END()
 end)
 
 compile()

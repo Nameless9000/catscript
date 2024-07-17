@@ -657,12 +657,18 @@ local branch_types = {
     REPEAT = 2;
 }
 local branch_stack = {}
-local function if_handler(script_obj: ScriptObj, condition)
+local function if_eq_handler(a, b)
     table.insert(branch_stack, {branch_types.IF})
-
-    get_script_context():IfEqual("", "")
+    if typeof(a) == "table" then
+        a = Variable.Get(a[1])
+    end
+    if typeof(b) == "table" then
+        b = Variable.Get(b[1])
+    end
+    get_script_context():IfEqual(a, b)
+    print(`IF {a} == {b}`)
 end
-local function repeat_handler(script_obj: ScriptObj, times: number?)
+local function repeat_handler(times: number?)
     table.insert(branch_stack, {branch_types.REPEAT})
 
     if times == nil then
@@ -670,9 +676,6 @@ local function repeat_handler(script_obj: ScriptObj, times: number?)
     else
         get_script_context():Repeat(tostring(times))
     end
-end
-local function else_handler()
-    
 end
 local function end_handler()
     assert(#branch_stack > 0, "unexpected end statement")
@@ -735,8 +738,7 @@ return function()
     env["Text"] = create_text
 
     env["REPEAT"] = repeat_handler
-    env["IF"] = if_handler
-    env["ELSE"] = else_handler
+    env["IF_EQ"] = if_eq_handler
     env["END"] = end_handler
 
     env["print"] = print_handler
@@ -751,7 +753,7 @@ return function()
         __index = function(self, i)
             local var = rawget(var_env, i)
             if var then
-                print(`GET {i} : {var}`)
+                print(`GET {i}`)
                 return setmetatable({i}, {
                     __add = function(_, b)
                         print(`ADD {i} + {b}`)
@@ -779,6 +781,7 @@ return function()
             elseif typeof(v) == "string" then
                 Variable.Set(i, get_script_context(), v)
             end
+
             rawset(var_env, i, v)
         end
     })
@@ -786,6 +789,6 @@ return function()
     setfenv(func, env)
     
     return function()
-        print(main_script:Export(0))
+        print(main_script:Export(1))
     end
 end
